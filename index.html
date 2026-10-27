@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Student Performance Predictor - A rule-based academic marks estimation tool developed for B.Tech AI & Data Science mini project.">
+  <title>Student Performance Predictor | Academic Marks Estimator</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="app-header">
+    <div class="container header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <!-- Graduation Cap SVG -->
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">Student Performance Predictor</h1>
+          <p class="brand-subtitle">Academic Marks Estimation & Analytics Dashboard</p>
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        <span>B.Tech AI &amp; Data Science Project</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="container main-content">
+    
+    <!-- Welcome & Purpose Hero Section -->
+    <section class="welcome-card">
+      <div class="welcome-content">
+        <div class="welcome-text">
+          <h2>Estimate Academic Examination Performance</h2>
+          <p>
+            This web application estimates a student's final examination score using a balanced 
+            <strong>weighted rule-based algorithm</strong> based on previous test scores, daily study hours, 
+            attendance percentage, and assignment completion rate.
+          </p>
+          <div class="model-meta">
+            <span class="meta-item">
+              <strong>Algorithm:</strong> Normalized Multi-Factor Linear Model
+            </span>
+            <span class="meta-item">
+              <strong>Scale:</strong> 0 &ndash; 100 Marks
+            </span>
+            <span class="meta-item status-pill">
+              Rule-Based Model (Educational Prototype)
+            </span>
+          </div>
+        </div>
+        
+        <!-- Formula Reference Quick-Card -->
+        <div class="formula-card">
+          <div class="formula-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Weighted Formula Breakdown</span>
+          </div>
+          <ul class="weights-list">
+            <li><span>Previous Exam Marks:</span> <strong>50%</strong></li>
+            <li><span>Daily Study Hours (8h max ref):</span> <strong>20%</strong></li>
+            <li><span>Classroom Attendance:</span> <strong>15%</strong></li>
+            <li><span>Assignment Completion:</span> <strong>15%</strong></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two-Column Interactive Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Student Input Form -->
+      <section class="card form-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <div class="card-icon blue-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3>Student Input Parameters</h3>
+              <p class="card-desc">Enter the student's continuous academic assessment metrics.</p>
+            </div>
+          </div>
+          <button type="button" id="btnQuickDemo" class="btn-text-accent" title="Fill with sample values for quick demonstration">
+            &plus; Sample Data
+          </button>
+        </div>
+
+        <form id="predictionForm" novalidate>
+          
+          <!-- Field 1: Student Name (Optional) -->
+          <div class="form-group">
+            <label for="studentName">
+              Student Name <span class="label-optional">(Optional)</span>
+            </label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <input 
+                type="text" 
+                id="studentName" 
+                name="studentName" 
+                placeholder="e.g. Alex Johnson"
+                maxlength="50"
+                autocomplete="off"
+              >
+            </div>
+            <span class="field-hint">Used for personalized report and local history log.</span>
+          </div>
+
+          <!-- Field 2: Previous Examination Marks (0-100) -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="previousMarks">
+                Previous Examination Marks <span class="required">*</span>
+              </label>
+              <span class="weight-tag">50% Weight</span>
+            </div>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <input 
+                type="number" 
+                id="previousMarks" 
+                name="previousMarks" 
+                min="0" 
+                max="100" 
+                step="0.5" 
+                placeholder="0 - 100" 
+                required
+              >
+              <span class="input-affix">Marks</span>
+            </div>
+            <div class="error-message" id="errorPreviousMarks"></div>
+          </div>
+
+          <!-- Field 3: Average Daily Study Hours (0-16) -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="studyHours">
+                Average Daily Study Hours <span class="required">*</span>
+              </label>
+              <span class="weight-tag">20% Weight</span>
+            </div>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <input 
+                type="number" 
+                id="studyHours" 
+                name="studyHours" 
+                min="0" 
+                max="16" 
+                step="0.5" 
+                placeholder="0.0 - 16.0" 
+                required
+              >
+              <span class="input-affix">Hrs/Day</span>
+            </div>
+            <span class="field-hint">Normalized to 100% using an 8 hrs/day benchmark.</span>
+            <div class="error-message" id="errorStudyHours"></div>
+          </div>
+
+          <!-- Field 4: Attendance Percentage (0-100) -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="attendance">
+                Classroom Attendance <span class="required">*</span>
+              </label>
+              <span class="weight-tag">15% Weight</span>
+            </div>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <input 
+                type="number" 
+                id="attendance" 
+                name="attendance" 
+                min="0" 
+                max="100" 
+                step="0.5" 
+                placeholder="0 - 100" 
+                required
+              >
+              <span class="input-affix">%</span>
+            </div>
+            <div class="error-message" id="errorAttendance"></div>
+          </div>
+
+          <!-- Field 5: Assignment Completion Percentage (0-100) -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="assignmentCompletion">
+                Assignment Completion <span class="required">*</span>
+              </label>
+              <span class="weight-tag">15% Weight</span>
+            </div>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4"></polyline>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              <input 
+                type="number" 
+                id="assignmentCompletion" 
+                name="assignmentCompletion" 
+                min="0" 
+                max="100" 
+                step="0.5" 
+                placeholder="0 - 100" 
+                required
+              >
+              <span class="input-affix">%</span>
+            </div>
+            <div class="error-message" id="errorAssignmentCompletion"></div>
+          </div>
+
+          <!-- Form Buttons -->
+          <div class="form-actions">
+            <button type="submit" id="btnPredict" class="btn btn-primary">
+              <span class="btn-text">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Predict Performance
+              </span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+            <button type="button" id="btnReset" class="btn btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+              Reset
+            </button>
+          </div>
+          
+        </form>
+      </section>
+
+      <!-- Right Column: Results & Analytics Output -->
+      <section class="results-container">
+        
+        <!-- Placeholder State (Before First Prediction) -->
+        <div id="resultsPlaceholder" class="card placeholder-card">
+          <div class="placeholder-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M18 20V10"></path>
+              <path d="M12 20V4"></path>
+              <path d="M6 20v-6"></path>
+            </svg>
+          </div>
+          <h3>Awaiting Student Input</h3>
+          <p>Fill out the academic indicators on the left and click <strong>Predict Performance</strong> to generate the estimated score, classification, and visual comparison charts.</p>
+        </div>
+
+        <!-- Active Results Section (Hidden until prediction) -->
+        <div id="resultsSection" class="results-wrapper hidden" aria-live="polite">
+          
+          <!-- Result Summary Hero Card -->
+          <div class="card result-card">
+            <div class="result-card-top">
+              <div>
+                <span class="subhead" id="resultStudentHeading">Estimated Academic Result</span>
+                <h3 class="result-title">Predicted Final Examination Score</h3>
+              </div>
+              <div id="categoryBadge" class="category-badge badge-excellent">
+                <span class="badge-icon" id="badgeIcon">&starf;</span>
+                <span id="categoryLabel">Excellent</span>
+              </div>
+            </div>
+
+            <!-- Big Score Display -->
+            <div class="score-display-wrapper">
+              <div class="score-main">
+                <span class="score-number" id="predictedScoreValue">00.0</span>
+                <span class="score-total">/ 100</span>
+              </div>
+              <div class="score-progress-bar-bg">
+                <div class="score-progress-bar" id="scoreProgressBar" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Input Metrics Quick Grid -->
+            <div class="metrics-chip-grid">
+              <div class="metric-chip">
+                <span class="chip-label">Prev. Exam</span>
+                <span class="chip-val" id="metricPrevMarks">--</span>
+              </div>
+              <div class="metric-chip">
+                <span class="chip-label">Study Hours</span>
+                <span class="chip-val" id="metricStudyHours">--</span>
+              </div>
+              <div class="metric-chip">
+                <span class="chip-label">Attendance</span>
+                <span class="chip-val" id="metricAttendance">--</span>
+              </div>
+              <div class="metric-chip">
+                <span class="chip-label">Assignments</span>
+                <span class="chip-val" id="metricAssignments">--</span>
+              </div>
+            </div>
+
+            <!-- Personalized Recommendations -->
+            <div class="recommendation-box" id="recommendationBox">
+              <div class="rec-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+              </div>
+              <div class="rec-text">
+                <h4 id="recTitle">Performance Insight &amp; Recommendation</h4>
+                <p id="recMessage">Loading personalized recommendation...</p>
+              </div>
+            </div>
+
+            <div class="disclaimer-note">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span><strong>Rule-based Estimate:</strong> This prediction is a weighted mathematical calculation for guidance purposes and is not an official academic grade.</span>
+            </div>
+          </div>
+
+          <!-- Charts Card Container -->
+          <div class="card charts-card">
+            <div class="card-header">
+              <div class="card-title-group">
+                <div class="card-icon purple-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                </div>
+                <div>
+                  <h3>Performance Visual Analytics</h3>
+                  <p class="card-desc">Visual comparison and target progress.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="charts-row">
+              <!-- Chart 1: Bar Chart Comparison -->
+              <div class="chart-box">
+                <div class="chart-heading">
+                  <h4>Previous vs. Predicted Marks</h4>
+                </div>
+                <div class="chart-canvas-wrapper">
+                  <canvas id="comparisonBarChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Chart 2: Doughnut Chart -->
+              <div class="chart-box">
+                <div class="chart-heading">
+                  <h4>Marks vs. Potential (Out of 100)</h4>
+                </div>
+                <div class="chart-canvas-wrapper">
+                  <canvas id="scoreDoughnutChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Prediction History Section -->
+    <section class="card history-card">
+      <div class="card-header history-header">
+        <div class="card-title-group">
+          <div class="card-icon indigo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h3>Recent Prediction History</h3>
+            <p class="card-desc">Saved locally in your browser session.</p>
+          </div>
+        </div>
+        <div class="history-actions">
+          <button type="button" id="btnClearHistory" class="btn btn-danger-outline" title="Clear all stored predictions">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Clear History
+          </button>
+        </div>
+      </div>
+
+      <!-- History Table / Empty State -->
+      <div id="historyTableContainer" class="history-table-wrapper">
+        <table class="history-table" id="historyTable">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>Student</th>
+              <th>Prev. Marks</th>
+              <th>Study Hrs</th>
+              <th>Attendance</th>
+              <th>Assignments</th>
+              <th>Predicted Marks</th>
+              <th>Category</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <!-- Populated via JavaScript -->
+          </tbody>
+        </table>
+        
+        <!-- Empty History State -->
+        <div id="historyEmptyState" class="empty-state">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 6v6l4 2"></path>
+          </svg>
+          <p>No predictions recorded yet. Run a prediction above to build your history log.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mini-Project Academic Reference / Guide Modal/Section -->
+    <section class="card info-card">
+      <div class="info-grid">
+        <div class="info-block">
+          <h4>Classification Criteria</h4>
+          <ul class="criteria-list">
+            <li><span class="badge-dot green"></span> <strong>85.0 &ndash; 100.0:</strong> Excellent</li>
+            <li><span class="badge-dot blue"></span> <strong>70.0 &ndash; 84.9:</strong> Very Good</li>
+            <li><span class="badge-dot yellow"></span> <strong>50.0 &ndash; 69.9:</strong> Good</li>
+            <li><span class="badge-dot orange"></span> <strong>35.0 &ndash; 49.9:</strong> Needs Improvement</li>
+            <li><span class="badge-dot red"></span> <strong>Below 35.0:</strong> At Risk</li>
+          </ul>
+        </div>
+        <div class="info-block">
+          <h4>Formula &amp; Normalization Logic</h4>
+          <p class="code-preview">
+            <code>Predicted Marks = (0.50 &times; PreviousMarks) + (0.20 &times; NormalizedStudyHours) + (0.15 &times; Attendance) + (0.15 &times; AssignmentCompletion)</code>
+          </p>
+          <p class="info-note">
+            <em>NormalizedStudyHours</em> = <code>min((StudyHours / 8.0) &times; 100, 100)</code>. Clamped strictly to [0, 100] scale.
+          </p>
+        </div>
+        <div class="info-block">
+          <h4>Academic Purpose</h4>
+          <p>
+            Designed as an illustrative decision-support prototype for students and academic advisors to identify early performance trends and motivate balanced continuous engagement.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <p>&copy; Student Performance Predictor &bull; B.Tech Artificial Intelligence &amp; Data Science Mini Project</p>
+      <p class="footer-sub">Frontend Web Application (HTML5, CSS3, Vanilla JS, Chart.js)</p>
+    </div>
+  </footer>
+
+  <!-- Notification Toast Container -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
+
